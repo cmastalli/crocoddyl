@@ -29,6 +29,7 @@ void exposeIntegratedActionRK4();
 void exposeCostAbstract();
 void exposeCostSum();
 void exposeCostControl();
+void exposeConstraintAbstract();
 void exposeActionNumDiff();
 void exposeDifferentialActionNumDiff();
 void exposeActivationNumDiff();
