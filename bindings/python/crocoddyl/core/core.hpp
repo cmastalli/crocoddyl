@@ -30,6 +30,7 @@ void exposeCostAbstract();
 void exposeCostSum();
 void exposeCostControl();
 void exposeConstraintAbstract();
+void exposeConstraintManager();
 void exposeActionNumDiff();
 void exposeDifferentialActionNumDiff();
 void exposeActivationNumDiff();
