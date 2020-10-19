@@ -136,6 +136,12 @@ struct CostDataSumTpl;
 template <typename Scalar>
 class CostModelControlTpl;
 
+// constraint
+template <typename Scalar>
+class ConstraintModelAbstractTpl;
+template <typename Scalar>
+struct ConstraintDataAbstractTpl;
+
 // shooting
 template <typename Scalar>
 class ShootingProblemTpl;
@@ -225,6 +231,9 @@ typedef CostItemTpl<double> CostItem;
 typedef CostModelSumTpl<double> CostModelSum;
 typedef CostDataSumTpl<double> CostDataSum;
 typedef CostModelControlTpl<double> CostModelControl;
+
+typedef ConstraintModelAbstractTpl<double> ConstraintModelAbstract;
+typedef ConstraintDataAbstractTpl<double> ConstraintDataAbstract;
 
 typedef ShootingProblemTpl<double> ShootingProblem;
 
