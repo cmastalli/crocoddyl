@@ -82,7 +82,11 @@ void exposeDifferentialActionAbstract() {
       .add_property("ng",
                     bp::make_function(&DifferentialActionModelAbstract_wrap::get_ng,
                                       bp::return_value_policy<bp::return_by_value>()),
-                    "number of constraints")
+                    "number of inequality constraints")
+      .add_property("nh",
+                    bp::make_function(&DifferentialActionModelAbstract_wrap::get_nh,
+                                      bp::return_value_policy<bp::return_by_value>()),
+                    "number of equality constraints")
       .add_property("state",
                     bp::make_function(&DifferentialActionModelAbstract_wrap::get_state,
                                       bp::return_value_policy<bp::return_by_value>()),

@@ -23,6 +23,8 @@ class SolverAbstract_wrap : public SolverAbstract, public bp::wrapper<SolverAbst
   using SolverAbstract::is_feasible_;
   using SolverAbstract::iter_;
   using SolverAbstract::steplength_;
+  using SolverAbstract::stop_;
+  using SolverAbstract::d_;
 
   explicit SolverAbstract_wrap(boost::shared_ptr<ShootingProblem> problem)
       : SolverAbstract(problem), bp::wrapper<SolverAbstract>() {}
