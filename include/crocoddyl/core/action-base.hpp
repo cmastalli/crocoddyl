@@ -74,6 +74,8 @@ namespace crocoddyl {
  * Jacobians of the inequality constraints, and
  *  - \f$\mathbf{h_x}\in\mathbb{R}^{nh\times ndx}\f$ and \f$\mathbf{h_u}\in\mathbb{R}^{nh\times nu}\f$ are the
  * Jacobians of the equality constraints.
+ * Additionally, it is important remark that `calcDiff()` computes the derivates using the latest stored values by
+ * `calc()`. Thus, we need to run first `calc()`.
  *
  * \sa `calc()`, `calcDiff()`, `createData()`
  */
