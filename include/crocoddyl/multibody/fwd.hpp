@@ -161,6 +161,12 @@ class CostModelImpulseCoPPositionTpl;
 template <typename Scalar>
 struct CostDataImpulseCoPPositionTpl;
 
+// constraints
+template <typename Scalar>
+class ConstraintModelFramePlacementEqualityTpl;
+template <typename Scalar>
+struct ConstraintDataFramePlacementEqualityTpl;
+
 // impulse
 template <typename Scalar>
 class ImpulseModelAbstractTpl;
@@ -305,8 +311,10 @@ typedef CostModelImpulseCoPPositionTpl<double> CostModelImpulseCoPPosition;
 typedef CostDataImpulseCoPPositionTpl<double> CostDataImpulseCoPPosition;
 typedef CostModelImpulseWrenchConeTpl<double> CostModelImpulseWrenchCone;
 typedef CostDataImpulseWrenchConeTpl<double> CostDataImpulseWrenchCone;
-
 typedef CostDataFrameRotationTpl<double> CostDataFrameRotation;
+
+typedef ConstraintModelFramePlacementEqualityTpl<double> ConstraintModelFramePlacementEquality;
+typedef ConstraintDataFramePlacementEqualityTpl<double> ConstraintDataFramePlacementEquality;
 
 typedef ImpulseModelAbstractTpl<double> ImpulseModelAbstract;
 typedef ImpulseDataAbstractTpl<double> ImpulseDataAbstract;
