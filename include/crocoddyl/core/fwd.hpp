@@ -170,6 +170,11 @@ template <typename Scalar>
 struct ActivationDataNumDiffTpl;
 
 template <typename Scalar>
+class ConstraintModelNumDiffTpl;
+template <typename Scalar>
+struct ConstraintDataNumDiffTpl;
+
+template <typename Scalar>
 class StateNumDiffTpl;
 
 template <typename Scalar>
@@ -253,6 +258,8 @@ typedef DifferentialActionModelNumDiffTpl<double> DifferentialActionModelNumDiff
 typedef DifferentialActionDataNumDiffTpl<double> DifferentialActionDataNumDiff;
 typedef ActivationModelNumDiffTpl<double> ActivationModelNumDiff;
 typedef ActivationDataNumDiffTpl<double> ActivationDataNumDiff;
+typedef ConstraintModelNumDiffTpl<double> ConstraintModelNumDiff;
+typedef ConstraintDataNumDiffTpl<double> ConstraintDataNumDiff;
 typedef StateNumDiffTpl<double> StateNumDiff;
 typedef ActuationModelNumDiffTpl<double> ActuationModelNumDiff;
 typedef ActuationDataNumDiffTpl<double> ActuationDataNumDiff;
