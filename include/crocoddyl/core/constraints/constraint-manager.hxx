@@ -129,8 +129,8 @@ void ConstraintModelManagerTpl<Scalar>::calc(const boost::shared_ptr<ConstraintD
       m_i->constraint->calc(d_i, x, u);
       const std::size_t& ng = m_i->constraint->get_ng();
       const std::size_t& nh = m_i->constraint->get_nh();
-      data->g.segment(ng_i, ng) += d_i->g;
-      data->h.segment(nh_i, nh) += d_i->g;
+      data->g.segment(ng_i, ng) = d_i->g;
+      data->h.segment(nh_i, nh) = d_i->h;
       ng_i += ng;
       nh_i += nh;
     }
