@@ -58,7 +58,7 @@ const std::size_t& ConstraintModelAbstractTpl<Scalar>::get_ng() const {
 
 template <typename Scalar>
 const std::size_t& ConstraintModelAbstractTpl<Scalar>::get_nh() const {
-  return nu_;
+  return nh_;
 }
 
 template <typename Scalar>
