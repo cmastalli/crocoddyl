@@ -46,6 +46,7 @@ void exposeMultibody() {
   exposeCostImpulseWrenchCone();
   exposeCostImpulseCoPPosition();
   exposeConstraintFramePlacementEquality();
+  exposeConstraintFrameVelocityEquality();
   exposeContact2D();
   exposeContact3D();
   exposeContact6D();
