@@ -101,6 +101,10 @@ void exposeDifferentialActionFreeFwdDynamics() {
                     bp::make_getter(&DifferentialActionDataFreeFwdDynamics::costs,
                                     bp::return_value_policy<bp::return_by_value>()),
                     "total cost data")
+      .add_property("constraints",
+                    bp::make_getter(&DifferentialActionDataFreeFwdDynamics::constraints,
+                                    bp::return_value_policy<bp::return_by_value>()),
+                    "constraint data")
       .add_property("Minv",
                     bp::make_getter(&DifferentialActionDataFreeFwdDynamics::Minv, bp::return_internal_reference<>()),
                     "inverse of the joint-space inertia matrix")

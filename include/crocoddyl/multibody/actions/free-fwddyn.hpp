@@ -11,18 +11,19 @@
 
 #include <stdexcept>
 
-#ifdef PINOCCHIO_WITH_CPPAD_SUPPORT  // TODO(cmastalli): Removed after merging Pinocchio v.2.4.8
+#ifdef PINOCCHIO_WITH_CPPAD_SUPPORT  // TODO(cmastalli): Removed after merging
+                                     // Pinocchio v.2.4.8
 #include <pinocchio/codegen/cppadcg.hpp>
 #endif
 
-#include "crocoddyl/multibody/fwd.hpp"
-#include "crocoddyl/core/diff-action-base.hpp"
-#include "crocoddyl/core/costs/cost-sum.hpp"
-#include "crocoddyl/core/constraints/constraint-manager.hpp"
 #include "crocoddyl/core/actuation-base.hpp"
-#include "crocoddyl/multibody/data/multibody.hpp"
-#include "crocoddyl/multibody/states/multibody.hpp"
+#include "crocoddyl/core/constraints/constraint-manager.hpp"
+#include "crocoddyl/core/costs/cost-sum.hpp"
+#include "crocoddyl/core/diff-action-base.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
+#include "crocoddyl/multibody/data/multibody.hpp"
+#include "crocoddyl/multibody/fwd.hpp"
+#include "crocoddyl/multibody/states/multibody.hpp"
 
 namespace crocoddyl {
 
@@ -49,26 +50,29 @@ class DifferentialActionModelFreeFwdDynamicsTpl : public DifferentialActionModel
                                             boost::shared_ptr<ConstraintModelManager> constraints = nullptr);
   virtual ~DifferentialActionModelFreeFwdDynamicsTpl();
 
-  virtual void calc(const boost::shared_ptr<DifferentialActionDataAbstract>& data, const Eigen::Ref<const VectorXs>& x,
-                    const Eigen::Ref<const VectorXs>& u);
-  virtual void calcDiff(const boost::shared_ptr<DifferentialActionDataAbstract>& data,
-                        const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>& u);
+  virtual void calc(const boost::shared_ptr<DifferentialActionDataAbstract> &data, const Eigen::Ref<const VectorXs> &x,
+                    const Eigen::Ref<const VectorXs> &u);
+  virtual void calcDiff(const boost::shared_ptr<DifferentialActionDataAbstract> &data,
+                        const Eigen::Ref<const VectorXs> &x, const Eigen::Ref<const VectorXs> &u);
   virtual boost::shared_ptr<DifferentialActionDataAbstract> createData();
-  virtual bool checkData(const boost::shared_ptr<DifferentialActionDataAbstract>& data);
+  virtual bool checkData(const boost::shared_ptr<DifferentialActionDataAbstract> &data);
 
-  virtual void quasiStatic(const boost::shared_ptr<DifferentialActionDataAbstract>& data, Eigen::Ref<VectorXs> u,
-                           const Eigen::Ref<const VectorXs>& x, const std::size_t& maxiter = 100,
-                           const Scalar& tol = Scalar(1e-9));
+  virtual void quasiStatic(const boost::shared_ptr<DifferentialActionDataAbstract> &data, Eigen::Ref<VectorXs> u,
+                           const Eigen::Ref<const VectorXs> &x, const std::size_t &maxiter = 100,
+                           const Scalar &tol = Scalar(1e-9));
 
-  const boost::shared_ptr<ActuationModelAbstract>& get_actuation() const;
-  const boost::shared_ptr<CostModelSum>& get_costs() const;
-  const boost::shared_ptr<ConstraintModelManager>& get_constraints() const;
-  pinocchio::ModelTpl<Scalar>& get_pinocchio() const;
-  const VectorXs& get_armature() const;
-  void set_armature(const VectorXs& armature);
+  const boost::shared_ptr<ActuationModelAbstract> &get_actuation() const;
+  const boost::shared_ptr<CostModelSum> &get_costs() const;
+  const boost::shared_ptr<ConstraintModelManager> &get_constraints() const;
+  pinocchio::ModelTpl<Scalar> &get_pinocchio() const;
+  const VectorXs &get_armature() const;
+  void set_armature(const VectorXs &armature);
 
  protected:
-  using Base::has_control_limits_;  //!< Indicates whether any of the control limits
+  using Base::has_control_limits_;  //!< Indicates whether any of the control
+                                    //!< limits
+  using Base::ng_;                  //!< Number of inequality constraints
+  using Base::nh_;                  //!< Number of equality constraints
   using Base::nr_;                  //!< Dimension of the cost residual
   using Base::nu_;                  //!< Control dimension
   using Base::state_;               //!< Model of the state
@@ -80,7 +84,7 @@ class DifferentialActionModelFreeFwdDynamicsTpl : public DifferentialActionModel
   boost::shared_ptr<ActuationModelAbstract> actuation_;
   boost::shared_ptr<CostModelSum> costs_;
   boost::shared_ptr<ConstraintModelManager> constraints_;
-  pinocchio::ModelTpl<Scalar>& pinocchio_;
+  pinocchio::ModelTpl<Scalar> &pinocchio_;
   bool with_armature_;
   VectorXs armature_;
 };
@@ -95,7 +99,7 @@ struct DifferentialActionDataFreeFwdDynamicsTpl : public DifferentialActionDataA
   typedef typename MathBase::MatrixXs MatrixXs;
 
   template <template <typename Scalar> class Model>
-  explicit DifferentialActionDataFreeFwdDynamicsTpl(Model<Scalar>* const model)
+  explicit DifferentialActionDataFreeFwdDynamicsTpl(Model<Scalar> *const model)
       : Base(model),
         pinocchio(pinocchio::DataTpl<Scalar>(model->get_pinocchio())),
         multibody(&pinocchio, model->get_actuation()->createData()),
@@ -117,8 +121,8 @@ struct DifferentialActionDataFreeFwdDynamicsTpl : public DifferentialActionDataA
 
   pinocchio::DataTpl<Scalar> pinocchio;
   DataCollectorActMultibodyTpl<Scalar> multibody;
-  boost::shared_ptr<CostDataSumTpl<Scalar> > costs;
-  boost::shared_ptr<ConstraintDataManagerTpl<Scalar> > constraints;
+  boost::shared_ptr<CostDataSumTpl<Scalar>> costs;
+  boost::shared_ptr<ConstraintDataManagerTpl<Scalar>> constraints;
   MatrixXs Minv;
   VectorXs u_drift;
   MatrixXs dtau_dx;
