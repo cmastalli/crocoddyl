@@ -69,8 +69,7 @@ class DifferentialActionModelFreeFwdDynamicsTpl : public DifferentialActionModel
   void set_armature(const VectorXs &armature);
 
  protected:
-  using Base::has_control_limits_;  //!< Indicates whether any of the control
-                                    //!< limits
+  using Base::has_control_limits_;  //!< Indicates whether any of the control limits
   using Base::ng_;                  //!< Number of inequality constraints
   using Base::nh_;                  //!< Number of equality constraints
   using Base::nr_;                  //!< Dimension of the cost residual
