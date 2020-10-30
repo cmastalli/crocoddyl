@@ -11,7 +11,6 @@
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/frames-derivatives.hpp>
 
-
 namespace crocoddyl {
 
 template <typename Scalar>

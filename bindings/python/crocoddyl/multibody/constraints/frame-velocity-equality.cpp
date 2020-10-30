@@ -31,19 +31,19 @@ void exposeConstraintFrameVelocityEquality() {
           ":param state: state of the multibody system\n"
           ":param Mref: reference frame velocity"))
       .def<void (ConstraintModelFrameVelocityEquality::*)(const boost::shared_ptr<ConstraintDataAbstract>&,
-                                                           const Eigen::Ref<const Eigen::VectorXd>&,
-                                                           const Eigen::Ref<const Eigen::VectorXd>&)>(
+                                                          const Eigen::Ref<const Eigen::VectorXd>&,
+                                                          const Eigen::Ref<const Eigen::VectorXd>&)>(
           "calc", &ConstraintModelFrameVelocityEquality::calc, bp::args("self", "data", "x", "u"),
           "Compute the residual of the frame velocity constraint.\n\n"
           ":param data: cost data\n"
           ":param x: time-discrete state vector\n"
           ":param u: time-discrete control input")
       .def<void (ConstraintModelFrameVelocityEquality::*)(const boost::shared_ptr<ConstraintDataAbstract>&,
-                                                           const Eigen::Ref<const Eigen::VectorXd>&)>(
+                                                          const Eigen::Ref<const Eigen::VectorXd>&)>(
           "calc", &ConstraintModelAbstract::calc, bp::args("self", "data", "x"))
       .def<void (ConstraintModelFrameVelocityEquality::*)(const boost::shared_ptr<ConstraintDataAbstract>&,
-                                                           const Eigen::Ref<const Eigen::VectorXd>&,
-                                                           const Eigen::Ref<const Eigen::VectorXd>&)>(
+                                                          const Eigen::Ref<const Eigen::VectorXd>&,
+                                                          const Eigen::Ref<const Eigen::VectorXd>&)>(
           "calcDiff", &ConstraintModelFrameVelocityEquality::calcDiff, bp::args("self", "data", "x", "u"),
           "Compute the Jacobians of the frame velocity constraint.\n\n"
           "It assumes that calc has been run first.\n"
@@ -51,7 +51,7 @@ void exposeConstraintFrameVelocityEquality() {
           ":param x: time-discrete state vector\n"
           ":param u: time-discrete control input\n")
       .def<void (ConstraintModelFrameVelocityEquality::*)(const boost::shared_ptr<ConstraintDataAbstract>&,
-                                                           const Eigen::Ref<const Eigen::VectorXd>&)>(
+                                                          const Eigen::Ref<const Eigen::VectorXd>&)>(
           "calcDiff", &ConstraintModelAbstract::calcDiff, bp::args("self", "data", "x"))
       .def("createData", &ConstraintModelFrameVelocityEquality::createData,
            bp::with_custodian_and_ward_postcall<0, 2>(), bp::args("self", "data"),
@@ -59,8 +59,7 @@ void exposeConstraintFrameVelocityEquality() {
            ":param data: shared data\n"
            ":return cost data.")
       .add_property("reference", &ConstraintModelFrameVelocityEquality::get_reference<FrameMotion>,
-                    &ConstraintModelFrameVelocityEquality::set_reference<FrameMotion>,
-                    "reference frame velocity");
+                    &ConstraintModelFrameVelocityEquality::set_reference<FrameMotion>, "reference frame velocity");
 
   bp::register_ptr_to_python<boost::shared_ptr<ConstraintDataFrameVelocityEquality> >();
 
