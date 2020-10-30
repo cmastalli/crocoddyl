@@ -15,11 +15,11 @@ namespace python {
 void exposeConstraintFrameVelocityEquality() {
   bp::class_<ConstraintModelFrameVelocityEquality, bp::bases<ConstraintModelAbstract> >(
       "ConstraintModelFrameVelocityEquality",
-      "This equality constraint function imposes a reference velocity of a given frame, i.e. p - pref = 0, with p "
+      "This equality constraint function imposes a reference velocity of a given frame, i.e. v - vref = 0, with v "
       "and vref as the current and reference "
       "frame velocity, respectively.",
       bp::init<boost::shared_ptr<StateMultibody>, FrameMotion, std::size_t>(
-          bp::args("self", "state", "Mref", "nu"),
+          bp::args("self", "state", "vref", "nu"),
           "Initialize the frame velocity equality constraint model.\n\n"
           ":param state: state of the multibody system\n"
           ":param vref: reference frame velocity\n"
