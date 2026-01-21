@@ -93,7 +93,8 @@ class HumanoidLocoManipulation:
                         1e3,
                     )
         # Cost for self-collision, and for state and control regularization
-        costs.addCost("stateLimitsCost", self._createStateLimsCost(nu), 1e3)
+        if not constraint:
+            costs.addCost("stateLimitsCost", self._createStateLimsCost(nu), 1e3)
         costs.addCost(
             "stateReg", self._createStateRegCost(qref, self.stateWeights, nu), 1e-3
         )
@@ -119,13 +120,21 @@ class HumanoidLocoManipulation:
                 )
                 impulses.addImpulse(name + "_contact", impulse)
             # Cost for wrench cone
-            costs.addCost(
-                name + "_frictionCone",
-                self._createWrenchConeCost(
-                    name, Mref.rotation, self.mu, self.comArea, nu
-                ),
-                1e1,
-            )
+            if False:  # constraint:
+                constraints.addConstraint(
+                    name + "_frictionCone",
+                    self._createWrenchConeConstraint(
+                        name, Mref.rotation, self.mu, self.comArea, nu
+                    ),
+                )
+            else:
+                costs.addCost(
+                    name + "_frictionCone",
+                    self._createWrenchConeCost(
+                        name, Mref.rotation, self.mu, self.comArea, nu
+                    ),
+                    1e1,
+                )
             # Cost for foot-force regularization
             costs.addCost(name + "_forceReg", self._createForceRegCost(name, nu), 1e-5)
         for name in handContacts:
@@ -147,11 +156,19 @@ class HumanoidLocoManipulation:
                 )
                 impulses.addImpulse(name + "_contact", impulse)
             # Cost for friction cone
-            costs.addCost(
-                name + "_frictionCone",
-                self._createFrictionConeCost(name, Mref.rotation, self.mu, nu),
-                1e1,
-            )
+            if constraints:
+                constraints.addConstraint(
+                    name + "_frictionCone",
+                    self._createFrictionConeConstraint(
+                        name, Mref.rotation, self.mu, nu
+                    ),
+                )
+            else:
+                costs.addCost(
+                    name + "_frictionCone",
+                    self._createFrictionConeCost(name, Mref.rotation, self.mu, nu),
+                    1e1,
+                )
             # Cost for hand-force regularization
             costs.addCost(name + "_forceReg", self._createForceRegCost(name, nu), 1e-5)
         for name, Mref in handsTarget.items():
@@ -176,14 +193,11 @@ class HumanoidLocoManipulation:
             frame_id = self.robot_model.getFrameId(name)
             # Cost for target reaching: feet
             footTrackingWeights = np.array([1, 1, 1] + [1.0] * 3)
-            if constraint:
-                fposeResidual = crocoddyl.ResidualModelFramePlacement(
-                    self.state, frame_id, Mref, nu
+            if constraint and switch:
+                constraints.addConstraint(
+                    name + "_pose",
+                    self._createFramePlacementConstraint(name, Mref, nu),
                 )
-                fposeConstraint = crocoddyl.ConstraintModelResidual(
-                    self.state, fposeResidual
-                )
-                constraints.addConstraint(name + "_pose", fposeConstraint)
             else:
                 costs.addCost(
                     name + "_pose",
@@ -476,15 +490,16 @@ class HumanoidLocoManipulation:
         )
         return crocoddyl.ShootingProblem(self.x0, models, terminalModel)
 
-    def createFlipProblem(self, distance, front=True):
+    def createFlipProblem(self, distance, front=True, constraint=False):
         # Problem definition
         Tstand, Tstart, Tflipseg, Tend = 40, 2, 3, 20
         # Model for stand and backflip phases
         standModel = self.createModel(
             # bodiesTarget={"root_joint": np.eye(3)},
-            footContacts=[self.LF_name, self.RF_name]
+            footContacts=[self.LF_name, self.RF_name],
+            constraint=constraint,
         )
-        backflipModel = self.createModel()
+        backflipModel = self.createModel(constraint=constraint)
         # Models for each backflip phase
         models = [standModel] * Tstand
         models += [backflipModel] * Tstart
@@ -533,10 +548,11 @@ class HumanoidLocoManipulation:
                     bodiesTarget={"root_joint": Rbody},
                     feetTarget=feetTarget,
                     switch=True,
+                    constraint=constraint,
                 )
             else:
                 backflipAngleModel = self.createModel(
-                    qref=qref, bodiesTarget={"root_joint": Rbody}
+                    qref=qref, bodiesTarget={"root_joint": Rbody}, constraint=constraint
                 )
             models += [backflipModel] * Tflipseg + [backflipAngleModel]
         # Model for resting posture
@@ -555,7 +571,8 @@ class HumanoidLocoManipulation:
         terminalModel = self.createModel(
             bodiesTarget=bodiesTarget,
             footContacts=[self.LF_name, self.RF_name],
-            handsTarget=handsTermTarget,
+            # handsTarget=handsTermTarget,
+            constraint=constraint,
         )
         return crocoddyl.ShootingProblem(self.x0, models, terminalModel)
 
@@ -593,6 +610,14 @@ class HumanoidLocoManipulation:
         residual = crocoddyl.ResidualModelState(self.state, self.xref, nu)
         return crocoddyl.CostModelResidual(self.state, activation, residual)
 
+    def _createFrictionConeConstraint(self, frameName, coneRotation, frictionCoeff, nu):
+        frame_id = self.robot_model.getFrameId(frameName)
+        cone = crocoddyl.FrictionCone(coneRotation, frictionCoeff)
+        residual = crocoddyl.ResidualModelContactFrictionCone(
+            self.state, frame_id, cone, nu, self._fwddyn
+        )
+        return crocoddyl.ConstraintModelResidual(self.state, residual, cone.lb, cone.ub)
+
     def _createFrictionConeCost(self, frameName, coneRotation, frictionCoeff, nu):
         frame_id = self.robot_model.getFrameId(frameName)
         cone = crocoddyl.FrictionCone(coneRotation, frictionCoeff)
@@ -616,11 +641,28 @@ class HumanoidLocoManipulation:
         )
         return crocoddyl.CostModelResidual(self.state, coneActivation, coneResidual)
 
+    def _createWrenchConeConstraint(
+        self, frameName, coneRotation, frictionCoeff, comArea, nu
+    ):
+        frame_id = self.robot_model.getFrameId(frameName)
+        cone = crocoddyl.WrenchCone(coneRotation, frictionCoeff, comArea)
+        coneResidual = crocoddyl.ResidualModelContactWrenchCone(
+            self.state, frame_id, cone, nu, self._fwddyn
+        )
+        return crocoddyl.ConstraintModelResidual(
+            self.state, coneResidual, cone.lb, cone.ub
+        )
+
     def _createFramePlacementCost(self, frameName, Mref, weights, nu):
         frame_id = self.robot_model.getFrameId(frameName)
         activation = crocoddyl.ActivationModelWeightedQuad(weights**2)
         residual = crocoddyl.ResidualModelFramePlacement(self.state, frame_id, Mref, nu)
         return crocoddyl.CostModelResidual(self.state, activation, residual)
+
+    def _createFramePlacementConstraint(self, frameName, Mref, nu):
+        frame_id = self.robot_model.getFrameId(frameName)
+        residual = crocoddyl.ResidualModelFramePlacement(self.state, frame_id, Mref, nu)
+        return crocoddyl.ConstraintModelResidual(self.state, residual)
 
     def _createFrameRotationCost(self, frameName, Rref, weights, nu):
         frame_id = self.robot_model.getFrameId(frameName)

@@ -25,7 +25,7 @@ q0 = copy.deepcopy(robot_model.referenceConfigurations["half_sitting"])
 
 # Creating the OC problem and solver with its callbacks
 humanoid = HumanoidLocoManipulation(q0, robot_model, RF_name, LF_name, RH_name, LH_name)
-problem = humanoid.createFlipProblem(0.3)
+problem = humanoid.createFlipProblem(0.3, True)
 solver = crocoddyl.SolverFDDP(problem)
 solver.th_minImprove = 1e-1
 if WITHPLOT:
