@@ -39,42 +39,42 @@ GAITPHASES = [
             "supportKnots": 2,
         }
     },
-    {
-        "trotting": {
-            "stepLength": 0.15,
-            "stepHeight": 0.1,
-            "timeStep": 1e-2,
-            "stepKnots": 25,
-            "supportKnots": 2,
-        }
-    },
-    {
-        "pacing": {
-            "stepLength": 0.15,
-            "stepHeight": 0.1,
-            "timeStep": 1e-2,
-            "stepKnots": 25,
-            "supportKnots": 5,
-        }
-    },
-    {
-        "bounding": {
-            "stepLength": 0.15,
-            "stepHeight": 0.1,
-            "timeStep": 1e-2,
-            "stepKnots": 25,
-            "supportKnots": 5,
-        }
-    },
-    {
-        "jumping": {
-            "jumpHeight": 0.15,
-            "jumpLength": [0.0, 0.3, 0.0],
-            "timeStep": 1e-2,
-            "groundKnots": 10,
-            "flyingKnots": 20,
-        }
-    },
+    # {
+    #     "trotting": {
+    #         "stepLength": 0.15,
+    #         "stepHeight": 0.1,
+    #         "timeStep": 1e-2,
+    #         "stepKnots": 25,
+    #         "supportKnots": 2,
+    #     }
+    # },
+    # {
+    #     "pacing": {
+    #         "stepLength": 0.15,
+    #         "stepHeight": 0.1,
+    #         "timeStep": 1e-2,
+    #         "stepKnots": 25,
+    #         "supportKnots": 5,
+    #     }
+    # },
+    # {
+    #     "bounding": {
+    #         "stepLength": 0.15,
+    #         "stepHeight": 0.1,
+    #         "timeStep": 1e-2,
+    #         "stepKnots": 25,
+    #         "supportKnots": 5,
+    #     }
+    # },
+    # {
+    #     "jumping": {
+    #         "jumpHeight": 0.15,
+    #         "jumpLength": [0.0, 0.3, 0.0],
+    #         "timeStep": 1e-2,
+    #         "groundKnots": 10,
+    #         "flyingKnots": 20,
+    #     }
+    # },
 ]
 
 solver = [None] * len(GAITPHASES)
@@ -106,6 +106,15 @@ for i, phase in enumerate(GAITPHASES):
                         constraint=True,
                     )
                 )
+                import odyn
+
+                solverSQP[i].verbose_level = crocoddyl.odyn.VerboseLevel.Silent
+                solverSQP[i].certify_infeas = True
+                solverSQP[i].qp_params.stop_abs = 1e-5
+                solverSQP[i].qp_params.stop_rel = 1e-5
+                solverSQP[i].qp_model.setEqualitiesMode(odyn.ConstraintMode.Elastic)
+                solverSQP[i].qp_model.setInequalitiesMode(odyn.ConstraintMode.Elastic)
+                # solverSQP[i].qp_params.refine_infeasible = False
         elif key == "trotting":
             # Creating a trotting problem
             solver[i] = crocoddyl.SolverFDDP(
@@ -223,16 +232,16 @@ for i, phase in enumerate(GAITPHASES):
     # Solving the problem with the OC solver
     xs = [x0] * (solver[i].problem.T + 1)
     us = solver[i].problem.quasiStatic([x0] * solver[i].problem.T)
-    print("*** SOLVE {key} (FeasShoot) ***".format_map(locals()))
-    solver[i].setDynamicsSolver(crocoddyl.DynamicsSolverType.FeasShoot)
-    solver[i].solve(xs, us, 100, False)
-    print("*** SOLVE {key} (MultiShoot) ***".format_map(locals()))
-    solver[i].setDynamicsSolver(crocoddyl.DynamicsSolverType.MultiShoot)
-    solver[i].solve(xs, us, 100, False)
-    Ts = int(solver[i].problem.T / 3)
-    print("*** SOLVE {key} (HybridShoot: {Ts}) ***".format_map(locals()))
-    solver[i].setDynamicsSolver(crocoddyl.DynamicsSolverType.HybridShoot, Ts)
-    solver[i].solve(xs, us, 100, False)
+    # print("*** SOLVE {key} (FeasShoot) ***".format_map(locals()))
+    # solver[i].setDynamicsSolver(crocoddyl.DynamicsSolverType.FeasShoot)
+    # solver[i].solve(xs, us, 100, False)
+    # print("*** SOLVE {key} (MultiShoot) ***".format_map(locals()))
+    # solver[i].setDynamicsSolver(crocoddyl.DynamicsSolverType.MultiShoot)
+    # solver[i].solve(xs, us, 100, False)
+    # Ts = int(solver[i].problem.T / 3)
+    # print("*** SOLVE {key} (HybridShoot: {Ts}) ***".format_map(locals()))
+    # solver[i].setDynamicsSolver(crocoddyl.DynamicsSolverType.HybridShoot, Ts)
+    # solver[i].solve(xs, us, 100, False)
     if crocoddyl.WITH_ODYN:
         xs = [x0_SQP] * (solverSQP[i].problem.T + 1)
         us = solverSQP[i].problem.quasiStatic([x0_SQP] * solverSQP[i].problem.T)

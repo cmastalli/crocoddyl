@@ -754,7 +754,8 @@ class SimpleQuadrupedalGaitProblem:
                 frameTranslationResidual = crocoddyl.ResidualModelFrameTranslation(
                     self.state, frame_id, placement.translation, nu
                 )
-                if True:  # not constraint: TODO: evaluate this further with restoring mechanism
+                # if True:  # not constraint: TODO: evaluate this further with restoring mechanism
+                if not constraint:
                     footTrack = crocoddyl.CostModelResidual(
                         self.state, frameTranslationResidual
                     )
